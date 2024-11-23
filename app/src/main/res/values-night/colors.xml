@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Primary Colors -->
+    <color name="primary">#004D1F</color> <!-- Hijau lebih gelap untuk mode malam -->
+    <color name="primary_variant">#9ABD75</color> <!-- Hijau muda redup -->
+    <color name="on_primary">#FFFFFF</color> <!-- Putih untuk teks di atas hijau -->
+
+    <!-- Secondary Colors -->
+    <color name="secondary">#E68500</color> <!-- Oranye sedikit lebih gelap -->
+    <color name="secondary_variant">#CCC8B4</color> <!-- Krem redup -->
+    <color name="on_secondary">#000000</color> <!-- Hitam tetap untuk teks di atas oranye -->
+
+    <!-- Background -->
+    <color name="background">#121212</color> <!-- Hitam keabu-abuan untuk mode malam -->
+    <color name="on_background">#D5ED9F</color> <!-- Hijau terang untuk teks di atas background gelap -->
+
+    <!-- Surface -->
+    <color name="surface">#1E1E1E</color> <!-- Permukaan abu gelap -->
+    <color name="on_surface">#D5ED9F</color> <!-- Hijau terang untuk teks di atas permukaan -->
+
+    <!-- Additional Night Colors -->
+    <color name="dark_gray">#2C2C2C</color> <!-- Abu gelap untuk elemen tambahan -->
+    <color name="muted_orange">#FFB347</color> <!-- Oranye muted untuk aksen -->
+</resources>

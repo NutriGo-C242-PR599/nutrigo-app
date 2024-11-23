@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Primary Colors -->
+    <color name="primary">#00712D</color> <!-- Hijau gelap -->
+    <color name="primary_variant">#D5ED9F</color> <!-- Hijau muda -->
+    <color name="on_primary">#FFFFFF</color> <!-- Putih untuk teks di atas warna hijau -->
+
+    <!-- Secondary Colors -->
+    <color name="secondary">#FF9100</color> <!-- Oranye -->
+    <color name="secondary_variant">#FFFBE6</color> <!-- Krem terang -->
+    <color name="on_secondary">#000000</color> <!-- Hitam untuk teks di atas warna oranye -->
+
+    <!-- Background -->
+    <color name="background">#FFFBE6</color> <!-- Warna dasar -->
+    <color name="on_background">#00712D</color> <!-- Teks hijau di atas background -->
+
+    <!-- Surface -->
+    <color name="surface">#FFFFFF</color> <!-- Permukaan putih -->
+    <color name="on_surface">#00712D</color> <!-- Hijau untuk teks di atas permukaan -->
+
+    <!-- Additional Night Colors -->
+    <color name="dark_gray">#2C2C2C</color> <!-- Abu gelap untuk elemen tambahan -->
+    <color name="muted_orange">#FFB347</color> <!-- Oranye muted untuk aksen -->
+
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -7,4 +31,5 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
 </resources>
