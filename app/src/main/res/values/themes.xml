@@ -24,4 +24,14 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!-- Splash Screen Theme -->
+    <style name="Theme.NutriGo.Splash" parent="Theme.SplashScreen">
+        <!-- Warna latar belakang splash screen -->
+        <item name="windowSplashScreenBackground">@color/white</item>
+        <!-- Logo atau ikon splash screen -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/nutrigo_splash</item>
+        <!-- Tema yang akan diterapkan setelah splash screen -->
+        <item name="postSplashScreenTheme">@style/Theme.NutriGo</item>
+    </style>
 </resources>
