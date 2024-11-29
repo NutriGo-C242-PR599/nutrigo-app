@@ -72,7 +72,13 @@ class HomeFragment : Fragment() {
     ) {
         if (it.resultCode == CameraActivity.CAMERAX_RESULT) {
             currentImageUri = it.data?.getStringExtra(CameraActivity.EXTRA_CAMERAX_IMAGE)?.toUri()
-            showImage()
+            if (currentImageUri == null) {
+                Log.e("HomeFragment", "CameraX returned null URI")
+            } else {
+                showImage()
+            }
+        } else {
+            Log.e("HomeFragment", "CameraX result code mismatch or cancelled")
         }
     }
 

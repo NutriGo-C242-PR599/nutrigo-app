@@ -16,6 +16,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.nutrigo.databinding.ActivityCameraBinding
 import com.nutrigo.util.createCustomTempFile
 
@@ -90,8 +91,9 @@ class CameraActivity : AppCompatActivity() {
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    val savedUri = output.savedUri ?: photoFile.toUri() // Default ke file path jika null
                     val intent = Intent()
-                    intent.putExtra(EXTRA_CAMERAX_IMAGE, output.savedUri.toString())
+                    intent.putExtra(EXTRA_CAMERAX_IMAGE, savedUri.toString())
                     setResult(CAMERAX_RESULT, intent)
                     finish()
                 }
