@@ -12,6 +12,12 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
+        android:id="@+id/navigation_contribute"
+        android:name="com.nutrigo.ui.contribute.ContributeFragment"
+        android:label="@string/title_contribute"
+        tools:layout="@layout/fragment_contribute" />
+
+    <fragment
         android:id="@+id/navigation_history"
         android:name="com.nutrigo.ui.history.HistoryFragment"
         android:label="@string/title_history"
@@ -23,9 +29,4 @@
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 
-    <fragment
-        android:id="@+id/navigation_contribute"
-        android:name="com.nutrigo.ui.contribute.ContributeFragment"
-        android:label="@string/title_contribute"
-        tools:layout="@layout/fragment_contribute" />
 </navigation>

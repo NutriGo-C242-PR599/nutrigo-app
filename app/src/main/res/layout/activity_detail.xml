@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.DetailActivity">
+
+    <TextView
+        android:id="@+id/titlePage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/informasi_nilai_gizi"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/produkName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/produc_name"
+        app:layout_constraintTop_toBottomOf="@id/titlePage"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/inz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:textStyle="bold"
+        android:text="@string/informasi_nilai_gizi"
+        app:layout_constraintTop_toBottomOf="@id/produkName"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/energy"
+        style="@style/inz"
+        android:text="@string/energy"
+        app:layout_constraintTop_toBottomOf="@id/inz"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/energyValue"
+        style="@style/inzValue"
+        android:text="@string/energy"
+        app:layout_constraintBottom_toBottomOf="@id/energy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/energy" />
+
+
+    <TextView
+        android:id="@+id/fat"
+        style="@style/inz"
+        android:text="@string/fat"
+        app:layout_constraintTop_toBottomOf="@id/energy"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/fatValue"
+        style="@style/inzValue"
+        android:layout_marginStart="184dp"
+        android:text="@string/fat"
+        app:layout_constraintBottom_toBottomOf="@id/fat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/fat" />
+
+    <TextView
+        android:id="@+id/saturatedFat"
+        style="@style/inz"
+        android:text="@string/saturated_fat"
+        app:layout_constraintTop_toBottomOf="@id/fat"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/saturatedFatValue"
+        style="@style/inzValue"
+        android:text="@string/saturated_fat"
+        app:layout_constraintTop_toTopOf="@id/saturatedFat"
+        app:layout_constraintBottom_toBottomOf="@id/saturatedFat"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/carbohydrates"
+        style="@style/inz"
+        android:text="@string/carbohydrates"
+        app:layout_constraintTop_toBottomOf="@id/saturatedFat"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/carbohydratesValue"
+        style="@style/inzValue"
+        android:text="@string/carbohydrates"
+        app:layout_constraintTop_toTopOf="@id/carbohydrates"
+        app:layout_constraintBottom_toBottomOf="@id/carbohydrates"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/sugar"
+        style="@style/inz"
+        android:text="@string/sugar"
+        app:layout_constraintTop_toBottomOf="@id/carbohydrates"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/sugarValue"
+        style="@style/inzValue"
+        android:text="@string/sugar"
+        app:layout_constraintTop_toTopOf="@id/sugar"
+        app:layout_constraintBottom_toBottomOf="@id/sugar"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/salt"
+        style="@style/inz"
+        android:text="@string/salt"
+        app:layout_constraintTop_toBottomOf="@id/sugar"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/saltValue"
+        style="@style/inzValue"
+        android:text="@string/salt"
+        app:layout_constraintTop_toTopOf="@id/salt"
+        app:layout_constraintBottom_toBottomOf="@id/salt"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/protein"
+        style="@style/inz"
+        android:text="@string/protein"
+        app:layout_constraintTop_toBottomOf="@id/salt"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/proteinValue"
+        style="@style/inzValue"
+        android:text="@string/protein"
+        app:layout_constraintTop_toTopOf="@id/protein"
+        app:layout_constraintBottom_toBottomOf="@id/protein"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/consumtionLimit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="8dp"
+        android:textStyle="bold"
+        android:text="@string/consumtion_limit"
+        app:layout_constraintTop_toBottomOf="@id/protein"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

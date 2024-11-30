@@ -1,29 +1,29 @@
 package com.nutrigo.ui.home
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis.COORDINATE_SYSTEM_VIEW_REFERENCED
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.mlkit.vision.MlKitAnalyzer
+import androidx.camera.view.LifecycleCameraController
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import com.nutrigo.CameraActivity
-import com.nutrigo.R
+import com.google.mlkit.vision.barcode.BarcodeScanner
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
 import com.nutrigo.databinding.FragmentHomeBinding
-import com.nutrigo.util.getImageUri
-import com.nutrigo.util.reduceFileImage
-import com.nutrigo.util.uriToFile
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
+import com.nutrigo.ui.DetailActivity
 
 
 class HomeFragment : Fragment() {
@@ -31,61 +31,14 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private var currentImageUri: Uri? = null
+    private var cameraSelector: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
-    // Permission launcher
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                Toast.makeText(requireContext(), "Permission request granted", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(requireContext(), "Permission request denied", Toast.LENGTH_LONG).show()
-            }
-        }
+    private lateinit var barcodeScanner: BarcodeScanner
 
-    // Gallery launcher
-    private val launcherGallery = registerForActivityResult(
-        ActivityResultContracts.PickVisualMedia()
-    ) { uri: Uri? ->
-        if (uri != null) {
-            currentImageUri = uri
-            showImage()
-        } else {
-            Log.d("Photo Picker", "No media selected")
-        }
-    }
-
-    // Camera launcher
-    private val launcherIntentCamera = registerForActivityResult(
-        ActivityResultContracts.TakePicture()
-    ) { isSuccess ->
-        if (isSuccess) {
-            showImage()
-        }
-    }
-
-    // CameraX launcher
-    private val launcherIntentCameraX = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (it.resultCode == CameraActivity.CAMERAX_RESULT) {
-            currentImageUri = it.data?.getStringExtra(CameraActivity.EXTRA_CAMERAX_IMAGE)?.toUri()
-            if (currentImageUri == null) {
-                Log.e("HomeFragment", "CameraX returned null URI")
-            } else {
-                showImage()
-            }
-        } else {
-            Log.e("HomeFragment", "CameraX result code mismatch or cancelled")
-        }
-    }
+    private var firstCall = true
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -94,96 +47,109 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Check permissions
-        if (!allPermissionsGranted()) {
-            requestPermissionLauncher.launch(REQUIRED_PERMISSION)
+        binding.switchCamera.setOnClickListener {
+            cameraSelector =
+                if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
+                else CameraSelector.DEFAULT_BACK_CAMERA
+            startCamera()
         }
 
-        // Button click listeners
-        binding.galleryButton.setOnClickListener { startGallery() }
-        binding.cameraButton.setOnClickListener { startCamera() }
-        binding.cameraXButton.setOnClickListener { startCameraX() }
-        binding.uploadButton.setOnClickListener { uploadImage() }
-    }
+        with(binding) {
+            // Mengatur SearchView dengan SearchBar
+            searchView.setupWithSearchBar(searchBar)
 
-    private fun allPermissionsGranted() =
-        ContextCompat.checkSelfPermission(
-            requireContext(),
-            REQUIRED_PERMISSION
-        ) == PackageManager.PERMISSION_GRANTED
+            // Mengatur keyboard menjadi angka saja di dalam SearchView
+            searchView.editText.inputType = InputType.TYPE_CLASS_NUMBER
 
-    private fun startGallery() {
-        launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            // Listener untuk menangani aksi pencarian
+            searchView.editText.setOnEditorActionListener { _, _, _ ->
+                val inputText = searchView.text.toString()
+
+                // Validasi input (jika hanya ingin angka)
+                if (inputText.isEmpty()) {
+                    Toast.makeText(requireContext(), "Input tidak boleh kosong!", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Memasukkan teks pencarian ke SearchBar dan menyembunyikan SearchView
+                    searchBar.setText(inputText)
+                    searchView.hide()
+
+                    // Mengirim data ke DetailActivity
+                    val intent = Intent(requireContext(), DetailActivity::class.java).apply {
+                        putExtra("PRODUCT_CODE", inputText)
+                    }
+                    startActivity(intent)
+
+                    // Menunda pengosongan teks untuk memastikan perubahan UI selesai
+                    searchView.postDelayed({
+                        searchView.editText.setText("") // Kosongkan teks
+                        searchBar.setText("") // Kosongkan teks pada SearchBar (opsional)
+                    }, 200)
+                }
+                false
+            }
+        }
+
+
+        startCamera()
     }
 
     private fun startCamera() {
-        currentImageUri = getImageUri(requireContext())
-        launcherIntentCamera.launch(currentImageUri)
+
+        val options = BarcodeScannerOptions.Builder()
+            .setBarcodeFormats(Barcode.FORMAT_UPC_A, Barcode.FORMAT_UPC_E)
+            .build()
+        barcodeScanner = BarcodeScanning.getClient(options)
+
+        val analyzer = MlKitAnalyzer(
+            listOf(barcodeScanner),
+            COORDINATE_SYSTEM_VIEW_REFERENCED,
+            ContextCompat.getMainExecutor(requireContext())
+        ) { result : MlKitAnalyzer.Result? ->
+
+            showResult(result)
+        }
+
+        val cameraController = LifecycleCameraController(requireContext())
+        cameraController.setImageAnalysisAnalyzer(
+            ContextCompat.getMainExecutor(requireContext()),
+            analyzer
+        )
+        cameraController.bindToLifecycle(viewLifecycleOwner)
+        binding.viewFinder.controller = cameraController
+
     }
 
-    private fun startCameraX() {
-        val intent = Intent(requireContext(), CameraActivity::class.java)
-        launcherIntentCameraX.launch(intent)
-    }
+    private fun showResult(result: MlKitAnalyzer.Result?) {
+        if (firstCall) {
+            val barcodeResults = result?.getValue(barcodeScanner)
+            if (!barcodeResults.isNullOrEmpty() && barcodeResults[0] != null) {
+                val barcode = barcodeResults[0]
+                if (barcode.valueType == Barcode.TYPE_PRODUCT) { // Hanya tipe produk (UPC)
+                    firstCall = false
+                    val productCode = barcode.rawValue // Ambil nilai kode produk
 
-    private fun showImage() {
-        currentImageUri?.let {
-            Log.d("Image URI", "showImage: $it")
-            binding.previewImageView.setImageURI(it)
+                    val alertDialog = AlertDialog.Builder(requireContext())
+                        .setMessage("Kode Produk: $productCode")
+                        .setPositiveButton("Detail Nutrisi") { _, _ ->
+                            firstCall = true
+                            // Kirim data ke DetailActivity
+                            val intent = Intent(requireContext(), DetailActivity::class.java)
+                            intent.putExtra("PRODUCT_CODE", productCode) // Kirim kode produk
+                            startActivity(intent)
+                        }
+                        .setNegativeButton("Scan Lagi") { _, _ ->
+                            firstCall = true
+                        }
+                        .setCancelable(false)
+                        .create()
+                    alertDialog.show()
+                }
+            }
         }
     }
 
-    private fun uploadImage() {
-        currentImageUri?.let { uri ->
-            val imageFile = uriToFile(uri, requireContext()).reduceFileImage()
-            Log.d("Image Classification File", "showImage: ${imageFile.path}")
-            showLoading(true)
-
-            val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
-            val multipartBody = MultipartBody.Part.createFormData(
-                "photo",
-                imageFile.name,
-                requestImageFile
-            )
-
-            /*
-
-            lifecycleScope.launch {
-                try {
-                    val apiService = ApiConfig.getApiService()
-                    val successResponse = apiService.uploadImage(multipartBody)
-                    with(successResponse.data) {
-                        binding.resultTextView.text = if (isAboveThreshold == true) {
-                            showToast(successResponse.message.toString())
-                            String.format("%s with %.2f%%", result, confidenceScore)
-                        } else {
-                            showToast("Model is predicted successfully but under threshold.")
-                            String.format("Please use the correct picture because the confidence score is %.2f%%", confidenceScore)
-                        }
-                    }
-                    showLoading(false)
-                } catch (e: HttpException) {
-                    val errorBody = e.response()?.errorBody()?.string()
-                    val errorResponse = Gson().fromJson(errorBody, FileUploadResponse::class.java)
-                    showToast(errorResponse.message.toString())
-                    showLoading(false)
-                }
-            }
-
-             */
-        } ?: showToast(getString(R.string.empty_image_warning))
-    }
-
-    private fun showLoading(isLoading: Boolean) {
-//        binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
     companion object {
-        private const val REQUIRED_PERMISSION = Manifest.permission.CAMERA
+        private const val TAG = "CameraFragment"
     }
 
     override fun onDestroyView() {

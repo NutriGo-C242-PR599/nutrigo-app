@@ -54,6 +54,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation (libs.androidx.constraintlayout.v214)
 
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
@@ -64,4 +65,8 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    //Barcode
+    implementation(libs.play.services.mlkit.barcode.scanning)
+    implementation(libs.androidx.camera.mlkit.vision)
 }

@@ -12,4 +12,16 @@
     <string name="gallery">Galeri</string>
     <string name="upload">Unggah</string>
     <string name="empty_image_warning">Silakan masukkan berkas gambar terlebih dahulu.</string>
+
+    <string name="searchbar_hint">Masukkan kode</string>
+    <string name="informasi_nilai_gizi">Informasi Nilai Gizi</string>
+    <string name="produc_name">Nama Produk :</string>
+    <string name="energy">Energi</string>
+    <string name="fat">Lemak</string>
+    <string name="saturated_fat">Lemak Jenuh</string>
+    <string name="carbohydrates">Karbohidrat</string>
+    <string name="sugar">Gula</string>
+    <string name="salt">Garam</string>
+    <string name="protein">Protein</string>
+    <string name="consumtion_limit">Batas Konsumsi Gula Garam dan Lemak</string>
 </resources>

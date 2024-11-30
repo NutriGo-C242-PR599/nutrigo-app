@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.NutriGo" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.NutriGo" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_variant</item>
@@ -19,10 +19,36 @@
         <!-- Surface color -->
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/on_surface</item>
+        <item name="bottomNavigationStyle">@style/CustomBottomNavigationStyle</item>
+
 
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+
+        <!-- Apply the custom SearchBar style -->
+        <item name="materialSearchBarStyle">@style/Widget.Material3.CustomSearchBar</item>
+    </style>
+
+    <!-- Define custom SearchBar style -->
+    <style name="Widget.Material3.CustomSearchBar" parent="Widget.Material3.SearchBar">
+        <!-- Define the background color of the search bar -->
+        <item name="android:background">@color/primary_variant</item>
+
+        <!-- Define the color of the text inside the search bar -->
+        <item name="android:textColor">@color/on_primary</item>
+
+        <!-- Define the color of the hint text -->
+        <item name="android:textColorHint">@color/on_primary</item>
+
+        <!-- Optional: Define the padding for the search bar -->
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <style name="CustomBottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/on_surface</item>
     </style>
 
     <!-- Splash Screen Theme -->
@@ -34,4 +60,6 @@
         <!-- Tema yang akan diterapkan setelah splash screen -->
         <item name="postSplashScreenTheme">@style/Theme.NutriGo</item>
     </style>
+
+
 </resources>
