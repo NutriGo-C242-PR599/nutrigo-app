@@ -5,11 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.nutrigo.databinding.FragmentContributeBinding
-import com.nutrigo.ui.history.HistoryViewModel
 
 class ContributeFragment : Fragment() {
 
@@ -24,21 +21,24 @@ class ContributeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val historyViewModel =
-            ViewModelProvider(this).get(ContributeViewModel::class.java)
 
         _binding = FragmentContributeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
-        historyViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+        val productCode = arguments?.getString(PRODUCT_CODE)
+
+        binding.etProductCode.setText(productCode)
+
+
         return root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val PRODUCT_CODE = "PRODUCT_CODE"
     }
 }

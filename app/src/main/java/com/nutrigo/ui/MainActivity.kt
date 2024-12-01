@@ -10,6 +10,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.nutrigo.R
 import com.nutrigo.databinding.ActivityMainBinding
+import com.nutrigo.ui.contribute.ContributeFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -28,6 +29,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (intent.hasExtra(ContributeFragment.PRODUCT_CODE)){
+            val productCode = intent.getStringExtra(ContributeFragment.PRODUCT_CODE)
+
+            showContributeFragment(productCode)
+        }
+
         splashScreen.setKeepOnScreenCondition {
             isSplashScreenVisible
         }
@@ -41,7 +48,18 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
         navView.setupWithNavController(navController)
+
+
     }
+
+    private fun showContributeFragment(productCode: String?) {
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        val bundle = Bundle().apply {
+            putString(ContributeFragment.PRODUCT_CODE, productCode)
+        }
+        navController.navigate(R.id.navigation_contribute, bundle)
+    }
+
 
 
     override fun onDestroy() {

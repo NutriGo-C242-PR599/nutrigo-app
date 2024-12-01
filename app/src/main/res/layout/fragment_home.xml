@@ -64,6 +64,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:backgroundTint="@color/secondary_variant"
         app:layout_constraintTop_toBottomOf="@id/logoNutrigo">
 
     </com.google.android.material.search.SearchView>

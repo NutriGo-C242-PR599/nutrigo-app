@@ -1,19 +1,18 @@
 package com.nutrigo.ui.home
 
+import android.Manifest
 import android.content.Intent
-import android.net.Uri
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis.COORDINATE_SYSTEM_VIEW_REFERENCED
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.mlkit.vision.MlKitAnalyzer
 import androidx.camera.view.LifecycleCameraController
 import androidx.core.content.ContextCompat
@@ -25,7 +24,6 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.nutrigo.databinding.FragmentHomeBinding
 import com.nutrigo.ui.DetailActivity
 
-
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -36,6 +34,22 @@ class HomeFragment : Fragment() {
     private lateinit var barcodeScanner: BarcodeScanner
 
     private var firstCall = true
+
+    // Registrar permintaan izin kamera
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                // Jika izin diberikan, mulai kamera
+                startCamera()
+            } else {
+                // Jika izin ditolak, tampilkan pesan ke pengguna
+                Toast.makeText(
+                    requireContext(),
+                    "Izin kamera diperlukan untuk menggunakan fitur ini",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -51,7 +65,7 @@ class HomeFragment : Fragment() {
             cameraSelector =
                 if (cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) CameraSelector.DEFAULT_FRONT_CAMERA
                 else CameraSelector.DEFAULT_BACK_CAMERA
-            startCamera()
+            checkCameraPermissionAndStart()
         }
 
         with(binding) {
@@ -65,36 +79,62 @@ class HomeFragment : Fragment() {
             searchView.editText.setOnEditorActionListener { _, _, _ ->
                 val inputText = searchView.text.toString()
 
-                // Validasi input (jika hanya ingin angka)
                 if (inputText.isEmpty()) {
                     Toast.makeText(requireContext(), "Input tidak boleh kosong!", Toast.LENGTH_SHORT).show()
                 } else {
-                    // Memasukkan teks pencarian ke SearchBar dan menyembunyikan SearchView
                     searchBar.setText(inputText)
                     searchView.hide()
-
-                    // Mengirim data ke DetailActivity
                     val intent = Intent(requireContext(), DetailActivity::class.java).apply {
-                        putExtra("PRODUCT_CODE", inputText)
+                        putExtra(DetailActivity.PRODUCT_CODE, inputText)
                     }
                     startActivity(intent)
 
-                    // Menunda pengosongan teks untuk memastikan perubahan UI selesai
                     searchView.postDelayed({
-                        searchView.editText.setText("") // Kosongkan teks
-                        searchBar.setText("") // Kosongkan teks pada SearchBar (opsional)
+                        searchView.editText.setText("")
+                        searchBar.setText("")
                     }, 200)
                 }
                 false
             }
         }
 
+        // Cek izin kamera saat pertama kali membuka fragment
+        checkCameraPermissionAndStart()
+    }
 
-        startCamera()
+    private fun checkCameraPermissionAndStart() {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // Jika izin sudah diberikan, langsung mulai kamera
+                startCamera()
+            }
+
+            shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
+                // Jika pengguna sebelumnya menolak izin, tampilkan dialog penjelasan
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Izin Kamera Diperlukan")
+                    .setMessage("Fitur ini memerlukan izin kamera untuk dapat digunakan. Berikan izin untuk melanjutkan.")
+                    .setPositiveButton("OK") { _, _ ->
+                        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                    .setNegativeButton("Batal") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create()
+                    .show()
+            }
+
+            else -> {
+                // Langsung minta izin jika belum pernah diminta sebelumnya
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
     }
 
     private fun startCamera() {
-
         val options = BarcodeScannerOptions.Builder()
             .setBarcodeFormats(Barcode.FORMAT_UPC_A, Barcode.FORMAT_UPC_E)
             .build()
@@ -104,8 +144,7 @@ class HomeFragment : Fragment() {
             listOf(barcodeScanner),
             COORDINATE_SYSTEM_VIEW_REFERENCED,
             ContextCompat.getMainExecutor(requireContext())
-        ) { result : MlKitAnalyzer.Result? ->
-
+        ) { result: MlKitAnalyzer.Result? ->
             showResult(result)
         }
 
@@ -116,7 +155,6 @@ class HomeFragment : Fragment() {
         )
         cameraController.bindToLifecycle(viewLifecycleOwner)
         binding.viewFinder.controller = cameraController
-
     }
 
     private fun showResult(result: MlKitAnalyzer.Result?) {
@@ -124,17 +162,16 @@ class HomeFragment : Fragment() {
             val barcodeResults = result?.getValue(barcodeScanner)
             if (!barcodeResults.isNullOrEmpty() && barcodeResults[0] != null) {
                 val barcode = barcodeResults[0]
-                if (barcode.valueType == Barcode.TYPE_PRODUCT) { // Hanya tipe produk (UPC)
+                if (barcode.valueType == Barcode.TYPE_PRODUCT) {
                     firstCall = false
-                    val productCode = barcode.rawValue // Ambil nilai kode produk
+                    val productCode = barcode.rawValue
 
                     val alertDialog = AlertDialog.Builder(requireContext())
                         .setMessage("Kode Produk: $productCode")
                         .setPositiveButton("Detail Nutrisi") { _, _ ->
                             firstCall = true
-                            // Kirim data ke DetailActivity
                             val intent = Intent(requireContext(), DetailActivity::class.java)
-                            intent.putExtra("PRODUCT_CODE", productCode) // Kirim kode produk
+                            intent.putExtra(DetailActivity.PRODUCT_CODE, productCode)
                             startActivity(intent)
                         }
                         .setNegativeButton("Scan Lagi") { _, _ ->
@@ -146,10 +183,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-    }
-
-    companion object {
-        private const val TAG = "CameraFragment"
     }
 
     override fun onDestroyView() {

@@ -15,7 +15,7 @@
 
     <string name="searchbar_hint">Masukkan kode</string>
     <string name="informasi_nilai_gizi">Informasi Nilai Gizi</string>
-    <string name="produc_name">Nama Produk :</string>
+    <string name="product_name">Nama Produk :</string>
     <string name="energy">Energi</string>
     <string name="fat">Lemak</string>
     <string name="saturated_fat">Lemak Jenuh</string>
@@ -23,5 +23,11 @@
     <string name="sugar">Gula</string>
     <string name="salt">Garam</string>
     <string name="protein">Protein</string>
+    <string name="blank">-</string>
     <string name="consumtion_limit">Batas Konsumsi Gula Garam dan Lemak</string>
+    <string name="product_code">Kode Produk :</string>
+    <string name="limit_consumtion_value">Kementerian Kesehatan (Kemenkes) menyarankan batas konsumsi gula, garam, dan lemak (GGL) per orang per hari, yakni 50 gram atau 4 sendok makan gula, 2.000 miligram natrium/ atau 5 gram atau 1 sendok teh garam (natrium/sodium), dan lemak hanya 67 gram atau 5 sendok makan minyak goreng.</string>
+    <string name="lapor">Laporkan Data Salah</string>
+    <string name="nutrition_table">Tabel Nutrisi</string>
+
 </resources>

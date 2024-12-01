@@ -7,17 +7,118 @@
     tools:context=".ui.contribute.ContributeFragment">
 
     <TextView
-        android:id="@+id/text_dashboard"
+        android:id="@+id/contribute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="KONTRIBUSI"
+        android:textStyle="bold"
+        android:textColor="@color/primary"
+        android:textSize="14sp"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_product_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/product_code"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@id/contribute"
+        app:layout_constraintStart_toStartOf="@id/contribute"/>
+
+    <EditText
+        android:id="@+id/et_product_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_product_code"
+        app:layout_constraintStart_toStartOf="@id/tv_product_code"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_edittext"
+        android:padding="4dp"/>
+
+    <TextView
+        android:id="@+id/tv_product_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/product_name"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@id/et_product_code"
+        app:layout_constraintStart_toStartOf="@id/contribute"/>
+
+    <EditText
+        android:id="@+id/et_product_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_product_name"
+        app:layout_constraintStart_toStartOf="@id/tv_product_name"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_edittext"
+        android:padding="4dp"/>
+
+    <TextView
+        android:id="@+id/tv_nutrition_table"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/nutrition_table"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@id/et_product_name"
+        app:layout_constraintStart_toStartOf="@id/contribute"/>
+
+    <ImageView
+        android:id="@+id/iv_nutrition_table"
+        android:layout_width="0dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_edittext"
+        app:layout_constraintTop_toBottomOf="@id/tv_nutrition_table"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:scaleType="centerCrop"/>
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_add_a_photo"
+        android:background="@drawable/rounded_edittext"
+        app:layout_constraintTop_toTopOf="@id/iv_nutrition_table"
+        app:layout_constraintStart_toStartOf="@id/iv_nutrition_table"
+        app:layout_constraintEnd_toEndOf="@id/iv_nutrition_table"
+        app:layout_constraintBottom_toBottomOf="@id/iv_nutrition_table"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@id/iv_nutrition_table"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Batal"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:text="Kirim"/>
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
