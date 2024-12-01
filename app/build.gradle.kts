@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.navigation.safeargs)
 }
 
 android {
@@ -9,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.nutrigo"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -21,7 +22,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            isDebuggable = true
+        }
         release {
+            isDebuggable = false
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

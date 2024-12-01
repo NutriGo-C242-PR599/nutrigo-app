@@ -52,8 +52,7 @@
         android:hint="@string/searchbar_hint"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-    </com.google.android.material.search.SearchBar>
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <com.google.android.material.search.SearchView
         android:id="@+id/searchView"
@@ -61,12 +60,12 @@
         android:layout_height="0dp"
         android:hint="@string/searchbar_hint"
         app:layout_anchor="@id/searchBar"
+        android:layout_marginTop="250dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:backgroundTint="@color/secondary_variant"
-        app:layout_constraintTop_toBottomOf="@id/logoNutrigo">
-
-    </com.google.android.material.search.SearchView>
+        app:layout_constraintTop_toBottomOf="@id/logoNutrigo"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.None"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.nutrigo.ui.profil
+package com.nutrigo.ui.profile
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

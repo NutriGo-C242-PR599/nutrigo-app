@@ -1,46 +1,58 @@
-package com.nutrigo.ui
+package com.nutrigo.ui.detail
 
-import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.TextView
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.fragment.findNavController
 import com.nutrigo.R
 import com.nutrigo.data.remote.response.ProductResponse
 import com.nutrigo.data.remote.retrofit.ApiConfig
-import com.nutrigo.databinding.ActivityDetailBinding
+import com.nutrigo.databinding.FragmentDetailBinding
 import com.nutrigo.ui.contribute.ContributeFragment
+import com.nutrigo.ui.home.HomeFragmentDirections
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DetailActivity : AppCompatActivity() {
+class DetailFragment : Fragment() {
 
-    private lateinit var binding: ActivityDetailBinding
+    private var _binding: FragmentDetailBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentDetailBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivityDetailBinding.inflate(layoutInflater)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        setContentView(binding.root)
+        // Ambil data dari arguments
+        val productCode = arguments?.getString(PRODUCT_CODE_KEY)
 
-        // Ambil data dari intent
-        val productCode = intent.getStringExtra(PRODUCT_CODE)
-
-        // Gunakan data ini untuk menampilkan detail
         if (productCode != null) {
+
             binding.produkCode.text = "Kode Produk: $productCode"
-            // Lakukan logika tambahan (misalnya mencari detail produk dari database atau API)
             findProductDetail(productCode)
+
         } else {
-            Toast.makeText(this, "Kode produk tidak ditemukan!", Toast.LENGTH_SHORT).show()
+            AlertDialog.Builder(requireContext())
+                .setTitle("Kesalahan")
+                .setMessage("Data yang dikirim Null. Apakah Anda ingin mencoba lagi?")
+                .setNegativeButton("Coba Lagi") { _, _ ->
+                    parentFragmentManager.popBackStack()
+                }
+                .setCancelable(false)
+                .show()
         }
     }
 
@@ -54,9 +66,7 @@ class DetailActivity : AppCompatActivity() {
                     val responseBody = response.body()
                     val nutriments = responseBody?.product?.nutriments
 
-                    // Memeriksa apakah nutriments tidak null
                     if (nutriments != null) {
-                        // Menggunakan nilai default untuk menghindari NullPointerException
                         val energyValue = nutriments.energy ?: 0.0
                         val fatValue = nutriments.fat ?: 0.0
                         val saturatedFatValue = nutriments.saturatedFat ?: 0.0
@@ -65,7 +75,6 @@ class DetailActivity : AppCompatActivity() {
                         val saltsValue = nutriments.salt ?: 0.0
                         val proteinsValue = nutriments.proteins ?: 0.0
 
-                        // Memperbarui tampilan binding dengan format string
                         binding.energyValue.text = String.format("%.2f %s", energyValue, "kcal")
                         binding.fatValue.text = String.format("%.2f %s", fatValue, "g")
                         binding.saturatedFatValue.text = String.format("%.2f %s", saturatedFatValue, "g")
@@ -74,55 +83,43 @@ class DetailActivity : AppCompatActivity() {
                         binding.saltValue.text = String.format("%.2f %s", saltsValue, "g")
                         binding.proteinValue.text = String.format("%.2f %s", proteinsValue, "g")
                     } else {
-                        // Menampilkan pesan jika nutriments tidak tersedia
-                        Toast.makeText(
-                            binding.root.context,
-                            "Data nutriments tidak tersedia",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(requireContext(), "Data nutriments tidak tersedia", Toast.LENGTH_SHORT).show()
                     }
 
                 } else {
-
                     showProgressBar(false)
-                    val alertDialog = AlertDialog.Builder(this@DetailActivity)
+                    AlertDialog.Builder(requireContext())
                         .setTitle("Gagal memuat data produk")
                         .setMessage("Kode produk $productCode tidak ditemukan. Apakah Anda ingin berkontribusi untuk menambahkan produk ini?")
                         .setPositiveButton("Ikut Kontribusi") { _, _ ->
-
-                            // Jika pengguna memilih untuk berkontribusi, arahkan ke halaman berkontribusi
-                            val intent = Intent(this@DetailActivity, MainActivity::class.java)
-                            intent.putExtra(ContributeFragment.PRODUCT_CODE, productCode)
-                            startActivity(intent)
-                            finish()
+                            navigateToContributeFragment(productCode)
                         }
                         .setNegativeButton("Tidak") { _, _ ->
-                            Toast.makeText(this@DetailActivity, "Tidak Ikut, Lagi Sibuk", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this@DetailActivity, MainActivity::class.java)
-                            startActivity(intent)
-                            finish()
+                            parentFragmentManager.popBackStack()
                         }
                         .setCancelable(false)
-                        .create()
-                    alertDialog.show()
-
+                        .show()
                 }
             }
 
             override fun onFailure(call: Call<ProductResponse>, t: Throwable) {
                 showProgressBar(false)
-
-                // Menangani kegagalan permintaan
-                Toast.makeText(binding.root.context, "Gagal terhubung ke server: ${t.message}", Toast.LENGTH_SHORT).show()
-
-                // Kembali ke MainActivity jika gagal terhubung
-                val intent = Intent(this@DetailActivity, MainActivity::class.java)
-                startActivity(intent)
-                finish() // Optional jika ingin menutup DetailActivity setelah kembali ke HomeFragment
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Kesalahan")
+                    .setMessage("Gagal terhubung ke server: ${t.message}. Apakah Anda ingin mencoba lagi?")
+                    .setPositiveButton("Coba Lagi") { _, _ ->
+                        findProductDetail(productCode)
+                    }
+                    .setNegativeButton("Batal") { _, _ ->
+                        parentFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        findNavController().navigate(R.id.navigation_home)
+                    }
+                    .setCancelable(false)
+                    .show()
             }
+
         })
     }
-
 
     private fun showProgressBar(status: Boolean) {
         if (status) {
@@ -142,10 +139,25 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-
-
-    companion object {
-        const val PRODUCT_CODE = "PRODUCT_CODE"
+    private fun navigateToContributeFragment(productCode: String?) {
+        if (!productCode.isNullOrEmpty() && productCode.length > 11) {
+            if (findNavController().currentDestination?.id == R.id.navigation_detail) {
+                val action = DetailFragmentDirections.actionDetailToContribute(productCode)
+                findNavController().navigate(action)
+            } else {
+                Toast.makeText(requireContext(), "Navigasi tidak valid dari halaman ini!", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(requireContext(), "Kode produk tidak valid atau terlalu pendek!", Toast.LENGTH_SHORT).show()
+        }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object {
+        const val PRODUCT_CODE_KEY = "productCode"
+    }
 }

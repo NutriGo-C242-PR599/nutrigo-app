@@ -1,4 +1,4 @@
-package com.nutrigo.ui.profil
+package com.nutrigo.ui.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater

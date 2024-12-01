@@ -19,6 +19,7 @@ navigationUiKtx = "2.8.4"
 playServicesMlkitBarcodeScanning = "18.3.1"
 retrofit = "2.9.0"
 activity = "1.9.3"
+safeargs = "2.7.1"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCamera2" }
@@ -48,4 +49,5 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "safeargs" }
 

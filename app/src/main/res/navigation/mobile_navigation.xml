@@ -5,28 +5,55 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
 
+    <!-- Fragment Home -->
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.nutrigo.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <!-- Action to navigate to DetailFragment -->
+        <action
+            android:id="@+id/action_home_to_detail"
+            app:destination="@id/navigation_detail">
+            <argument
+                android:name="productCode"
+                app:argType="string" />
+        </action>
+    </fragment>
 
+    <!-- Fragment Contribute -->
     <fragment
         android:id="@+id/navigation_contribute"
         android:name="com.nutrigo.ui.contribute.ContributeFragment"
         android:label="@string/title_contribute"
         tools:layout="@layout/fragment_contribute" />
 
+    <!-- Fragment History -->
     <fragment
         android:id="@+id/navigation_history"
         android:name="com.nutrigo.ui.history.HistoryFragment"
         android:label="@string/title_history"
         tools:layout="@layout/fragment_history" />
 
+    <!-- Fragment Profile -->
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.nutrigo.ui.profil.ProfileFragment"
+        android:name="com.nutrigo.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 
+    <!-- Fragment Detail -->
+    <fragment
+        android:id="@+id/navigation_detail"
+        android:name="com.nutrigo.ui.detail.DetailFragment"
+        android:label="@string/title_detail"
+        tools:layout="@layout/fragment_detail">
+        <action
+            android:id="@+id/action_detail_to_contribute"
+            app:destination="@id/navigation_contribute">
+            <argument
+                android:name="productCode"
+                app:argType="string" />
+        </action>
+    </fragment>
 </navigation>
